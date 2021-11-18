@@ -11,11 +11,11 @@ from GPNN import PNN, GPNN
 from utils.image import save_image
 
 
-def main(contents_and_styles: List[Tuple[str, str]], out_dir: str):
+def main(contents_and_styles: List[Tuple[str, str]], out_dir: str, coarse_dim: int):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     PNN_moduel = PNN(patch_size=7, stride=1, alpha=0.005, reduce_memory_footprint=True)
-    GPNN_module = GPNN(PNN_moduel, scale_factor=(1, 1), resize=256, num_steps=10, pyr_factor=0.75, coarse_dim=128,
+    GPNN_module = GPNN(PNN_moduel, scale_factor=(1, 1), resize=256, num_steps=10, pyr_factor=0.75, coarse_dim=coarse_dim,
                        noise_sigma=0, device=device)
 
     for (content_image_path, style_iamge_path) in contents_and_styles:
@@ -24,7 +24,7 @@ def main(contents_and_styles: List[Tuple[str, str]], out_dir: str):
         for i in range(1):
             start = time()
             output_image = GPNN_module.run(target_img_path=style_iamge_path, init_mode=content_image_path)
-            print(f"took {time() - start} s")
+            print(f"{content_fname} {style_fname} took {time() - start} s")
             save_image(output_image, os.path.join(out_dir, f'{GPNN_module.resize}x{GPNN_module.pyr_factor}->{GPNN_module.coarse_dim}', f"{content_fname}-to-{style_fname}${i}{ext}"))
 
 
@@ -33,6 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--style_imgs_directory', type=str, required=True)
     parser.add_argument('--content_imgs_directory', type=str, required=True)
     parser.add_argument('--out_dir', type=str, default="output/style_transfer")
+    parser.add_argument('--coarse_dim', type=int, default=128)
     args = parser.parse_args()
 
     style_imgs = glob.glob(f"{args.style_imgs_directory}/*.jpg")
@@ -46,4 +47,4 @@ if __name__ == '__main__':
         contents_and_styles.extend([(content_img, style_img) for content_img in content_imgs])
 
     print(f"Total number of images: {len(contents_and_styles)}")
-    main(contents_and_styles, args.out_dir)
+    main(contents_and_styles, args.out_dir, args.coarse_dim)
