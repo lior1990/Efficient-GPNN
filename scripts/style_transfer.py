@@ -52,4 +52,4 @@ if __name__ == '__main__':
         contents_and_styles.extend([(content_img, style_img) for content_img in content_imgs])
 
     print(f"Total number of images: {len(contents_and_styles)}")
-    main(contents_and_styles, args.out_dir, args.coarse_dim)
+    main(contents_and_styles, args.out_dir, args.coarse_dim, args.double_run)
