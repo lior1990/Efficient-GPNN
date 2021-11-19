@@ -13,7 +13,7 @@ if __name__ == '__main__':
                      alpha=0.5,
                      reduce_memory_footprint=True)
     GPNN_module = GPNN(PNN_moduel,
-                       scale_factor=(1, 2),
+                       scale_factor=(1, 1),
                        resize=0, num_steps=10,
                        pyr_factor=0.75,
                        coarse_dim=14,
@@ -21,9 +21,9 @@ if __name__ == '__main__':
                        device="cuda:0")
 
     out_dir = f"outputs/retarget"
-    for im_path in image_paths:
-        fname, ext = os.path.splitext(os.path.basename(im_path))[:2]
-        for i in range(2):
+    for i in range(100):
+        for im_path in image_paths:
+            fname, ext = os.path.splitext(os.path.basename(im_path))[:2]
             start = time()
             output_image = GPNN_module.run(target_img_path=im_path, init_mode="target")
             print(f"took {time() - start} s")
