@@ -6,14 +6,14 @@ from GPNN import PNN, GPNN
 from utils.image import save_image
 
 if __name__ == '__main__':
-    dataset_dir = f'images/SIGD16'
+    dataset_dir = f'images/ade4'
     image_paths = [os.path.join(dataset_dir, x) for x in os.listdir(dataset_dir)]
     PNN_moduel = PNN(patch_size=7,
                      stride=1,
                      alpha=0.5,
                      reduce_memory_footprint=True)
     GPNN_module = GPNN(PNN_moduel,
-                       scale_factor=(1, 1.5),
+                       scale_factor=(1, 2),
                        resize=0, num_steps=10,
                        pyr_factor=0.75,
                        coarse_dim=14,
