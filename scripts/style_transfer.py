@@ -26,11 +26,15 @@ def main(contents_and_styles: List[Tuple[str, str]], out_dir: str, coarse_dim: i
         img_name = os.path.join(out_dir, f'{GPNN_module.resize}x{GPNN_module.pyr_factor}->{GPNN_module.coarse_dim}', f"{content_fname}-to-{style_fname}{ext}")
         save_image(output_image, img_name)
         if double_run:
+            resize = GPNN_module.resize
+            pyr_factor = GPNN_module.pyr_factor
+            coarse_dim = GPNN_module.coarse_dim
+
             PNN_moduel = PNN(patch_size=7, stride=1, alpha=0.005, reduce_memory_footprint=True)
             GPNN_module = GPNN(PNN_moduel, scale_factor=(1, 1), resize=256, num_steps=10, pyr_factor=0.75,
                                coarse_dim=32, noise_sigma=0, device=device)
             output_image = GPNN_module.run(target_img_path=style_image_path, init_mode=img_name)
-            img_name = os.path.join(out_dir, f'{GPNN_module.resize}x{GPNN_module.pyr_factor}->{GPNN_module.coarse_dim}',f"{content_fname}-to-{style_fname}-2-{ext}")
+            img_name = os.path.join(out_dir, f'{resize}x{pyr_factor}->{coarse_dim}',f"{content_fname}-to-{style_fname}-2-{ext}")
             save_image(output_image, img_name)
         print(f"{content_fname} {style_fname} took {time() - start} s")
 
