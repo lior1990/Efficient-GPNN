@@ -199,3 +199,46 @@ class GPNN:
 
         self.logger.close()
         return self.synthesized_image
+
+    def run_multiple_images(self, target_img_paths, init_mode, debug_dir=None):
+        """
+        Run the GPNN model to generate an image with a similar patch distribution to target_img_path.
+        This manages the coarse to fine NN steps.
+        :param target_img_path: path to a target image to match patches with
+        :param init_mode: Intialization mode for the process. (<patch to image> / target / noise)
+        """
+        pyramids_per_image = []
+        for target_img_path in target_img_paths:
+            pyramids_per_image.append(self._process_target_image(cv2.imread(target_img_path)))
+
+        self.target_pyramid = []
+        for lvl in range(len(pyramids_per_image[0])):
+            lvl_images = []
+            for train_image_idx in range(len(target_img_paths)):
+                lvl_images.extend(pyramids_per_image[train_image_idx])
+            self.target_pyramid.append(lvl_images)
+
+        self.synthesized_image = self._get_initial_image(init_mode)
+        self.logger = logger(self.num_steps, len(self.target_pyramid))
+
+        for lvl, lvl_target_img in enumerate(self.target_pyramid):
+            self.logger.new_lvl()
+            if lvl > 0:
+                h, w = self._get_synthesis_size(lvl=lvl)
+                self.synthesized_image = transforms.Resize((h, w), antialias=True)(self.synthesized_image)
+
+
+            lvl_output = self.PNN_module.replace_patches(values_image=self.target_pyramid[lvl],
+                                                         queries_image=self.synthesized_image,
+                                                         n_steps=self.num_steps if lvl > 0 else 1,
+                                                         keys_blur_factor=self.pyr_factor if lvl > 0 else 1,
+                                                         logger=self.logger)
+            if debug_dir:
+                save_image(self.synthesized_image, f"{debug_dir}/input{lvl}.png")
+                save_image(self.target_pyramid[lvl], f"{debug_dir}/target{lvl}.png")
+                save_image(lvl_output, f"{debug_dir}/output{lvl}.png")
+
+            self.synthesized_image = lvl_output
+
+        self.logger.close()
+        return self.synthesized_image
