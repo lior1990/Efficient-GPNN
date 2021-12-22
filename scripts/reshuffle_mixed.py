@@ -31,9 +31,10 @@ if __name__ == '__main__':
                        device=device)
 
     out_dir = f"outputs/reshuffle_mixed"
+    debug_out_dir = f"outputs/reshuffle_mixed_debug"
     for im_path in eval_image_paths:
         fname, ext = os.path.splitext(os.path.basename(im_path))[:2]
         start = time()
-        output_image = GPNN_module.run_multiple_images(train_image_paths, im_path)
+        output_image = GPNN_module.run_multiple_images(train_image_paths, im_path, debug_dir=debug_out_dir)
         print(f"took {time() - start} s")
         save_image(output_image, os.path.join(out_dir, f"{fname}${ext}"))

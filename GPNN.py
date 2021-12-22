@@ -235,7 +235,8 @@ class GPNN:
                                                          logger=self.logger)
             if debug_dir:
                 save_image(self.synthesized_image, f"{debug_dir}/input{lvl}.png")
-                save_image(self.target_pyramid[lvl], f"{debug_dir}/target{lvl}.png")
+                for img_idx in range(len(self.target_pyramid[lvl])):
+                    save_image(self.target_pyramid[lvl][img_idx], f"{debug_dir}/target_{img_idx}_{lvl}.png")
                 save_image(lvl_output, f"{debug_dir}/output{lvl}.png")
 
             self.synthesized_image = lvl_output
