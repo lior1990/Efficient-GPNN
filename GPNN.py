@@ -72,9 +72,9 @@ class PNN:
         :param n_steps: number of repeated replacements for each patch
         :param keys_blur_factor: the factor with which to blur the values to get keys (image is downscaled and then upscaled with this factor)
         """
-        keys_image = blur(values_image, keys_blur_factor)
-        keys = extract_patches(keys_image, self.patch_size, self.stride)
-        values = extract_patches(values_image, self.patch_size, self.stride)
+        keys_image = blur(values_image, keys_blur_factor, multiple=True)
+        keys = extract_patches(keys_image, self.patch_size, self.stride, multiple=True)
+        values = extract_patches(values_image, self.patch_size, self.stride, multiple=True)
         for i in range(n_steps):
             queries = extract_patches(queries_image, self.patch_size, self.stride)
 
@@ -133,7 +133,7 @@ class GPNN:
 
     def _get_synthesis_size(self, lvl):
         """Get the size of the output pyramid at a specific level"""
-        lvl_img = self.target_pyramid[lvl]
+        lvl_img = self.target_pyramid[lvl][0]
         h, w = lvl_img.shape[-2:]
         h, w = int(h * self.scale_factor[0]), int(w * self.scale_factor[1])
         return h, w
@@ -148,7 +148,7 @@ class GPNN:
         noise_sigma==0 means no noise.
 
         """
-        target_img = self.target_pyramid[-1]
+        target_img = self.target_pyramid[-1][0]
         h, w = self._get_synthesis_size(lvl=0)
         if os.path.exists(init_mode):
             # Read an image as the input and match its size to the

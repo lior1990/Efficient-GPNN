@@ -37,12 +37,15 @@ def downscale(img, pyr_factor):
     return transforms.Resize((new_h, new_w), antialias=True)(img)
 
 
-def blur(img, pyr_factor):
+def blur(img, pyr_factor, multiple=False):
     """Blur image by downscaling and then upscaling it back to original size"""
     assert pyr_factor <= 1
     if pyr_factor < 1:
-        d_img = downscale(img, pyr_factor)
-        img = transforms.Resize(img.shape[-2:], antialias=True)(d_img)
+        if multiple:
+            img = [blur(i, pyr_factor) for i in img]
+        else:
+            d_img = downscale(img, pyr_factor)
+            img = transforms.Resize(img.shape[-2:], antialias=True)(d_img)
     return img
 
 
@@ -87,13 +90,16 @@ def match_image_sizes(input, target):
     return input
 
 
-def extract_patches(src_img, patch_size, stride):
+def extract_patches(src_img, patch_size, stride, multiple=False):
     """
     Splits the image to overlapping patches and returns a pytorch tensor of size (N_patches, 3*patch_size**2)
     """
     channels = 3
-    patches = F.unfold(src_img, kernel_size=patch_size, dilation=(1, 1), stride=stride, padding=(0, 0)) # shape (b, 3*p*p, N_patches)
-    patches = patches.squeeze(dim=0).permute((1, 0)).reshape(-1, channels * patch_size**2)
+    if multiple:
+        patches = torch.cat([extract_patches(i, patch_size, stride) for i in src_img])
+    else:
+        patches = F.unfold(src_img, kernel_size=patch_size, dilation=(1, 1), stride=stride, padding=(0, 0)) # shape (b, 3*p*p, N_patches)
+        patches = patches.squeeze(dim=0).permute((1, 0)).reshape(-1, channels * patch_size**2)
     return patches
 
 def combine_patches(patches, patch_size, stride, img_shape):
