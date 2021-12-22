@@ -215,13 +215,13 @@ class GPNN:
         for lvl in range(len(pyramids_per_image[0])):
             lvl_images = []
             for train_image_idx in range(len(target_img_paths)):
-                lvl_images.extend(pyramids_per_image[train_image_idx])
+                lvl_images.append(pyramids_per_image[train_image_idx][lvl])
             self.target_pyramid.append(lvl_images)
 
         self.synthesized_image = self._get_initial_image(init_mode)
         self.logger = logger(self.num_steps, len(self.target_pyramid))
 
-        for lvl, lvl_target_img in enumerate(self.target_pyramid):
+        for lvl in range(len(self.target_pyramid)):
             self.logger.new_lvl()
             if lvl > 0:
                 h, w = self._get_synthesis_size(lvl=lvl)

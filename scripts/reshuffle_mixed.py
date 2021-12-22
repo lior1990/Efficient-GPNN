@@ -12,8 +12,8 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 
 if __name__ == '__main__':
-    train_dataset_dir = '../images/2imgs'
-    eval_dataset_dir = '../images/eval'
+    train_dataset_dir = 'images/2imgs'
+    eval_dataset_dir = 'images/eval'
     train_image_paths = [os.path.join(train_dataset_dir, x) for x in os.listdir(train_dataset_dir)]
     eval_image_paths = [os.path.join(eval_dataset_dir, x) for x in os.listdir(eval_dataset_dir)]
 
