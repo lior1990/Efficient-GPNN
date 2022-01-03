@@ -40,7 +40,10 @@ if __name__ == '__main__':
 
     out_dir = f"outputs/reshuffle_mixed"
     debug_out_dir = f"outputs/reshuffle_mixed_debug"
+    print(f"train image paths: {train_image_paths}")
+
     for im_path in eval_image_paths:
+        print(f"Working on {im_path}")
         fname, ext = os.path.splitext(os.path.basename(im_path))[:2]
         start = time()
         output_image = GPNN_module.run_multiple_images(train_image_paths, im_path, debug_dir=debug_out_dir)
