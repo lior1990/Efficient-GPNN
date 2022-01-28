@@ -1,3 +1,4 @@
+import argparse
 import os
 from time import time
 import sys
@@ -6,7 +7,12 @@ from GPNN import PNN, GPNN
 from utils.image import save_image
 
 if __name__ == '__main__':
-    dataset_dir = 'images/SIGD16'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset_dir', type=str, required=True)
+    args = parser.parse_args()
+
+    dataset_dir = args.dataset_dir
+
     image_paths = [os.path.join(dataset_dir, x) for x in os.listdir(dataset_dir)]
     PNN_moduel = PNN(patch_size=7,
                      stride=1,
@@ -21,11 +27,11 @@ if __name__ == '__main__':
                        noise_sigma=0.75,
                        device="cuda:0")
 
-    out_dir = f"outputs/reshuffle"
+    out_dir = f"outputs/reshuffle/{os.path.basename(dataset_dir)}"
     for im_path in image_paths:
         fname, ext = os.path.splitext(os.path.basename(im_path))[:2]
-        for i in range(5):
+        for i in range(25):
             start = time()
             output_image = GPNN_module.run(target_img_path=im_path, init_mode="target")
             print(f"took {time() - start} s")
-            save_image(output_image, os.path.join(out_dir, f"{fname}${i}{ext}"))
+            save_image(output_image, os.path.join(out_dir, f"{fname}_{i}{ext}"))
