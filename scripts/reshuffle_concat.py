@@ -44,7 +44,7 @@ if __name__ == '__main__':
                      alpha=0.005,
                      reduce_memory_footprint=True)
     GPNN_module = GPNN(PNN_moduel,
-                       scale_factor=(1/len(images), 1/len(images)),
+                       scale_factor=(1, 1/len(images)),
                        resize=0,
                        num_steps=10,
                        pyr_factor=0.75,
