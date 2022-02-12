@@ -136,6 +136,7 @@ class GPNN:
         lvl_img = self.target_pyramid[lvl]
         h, w = lvl_img.shape[-2:]
         h, w = int(h * self.scale_factor[0]), int(w * self.scale_factor[1])
+        print(f"size for lvl {lvl} is {h}, {w}")
         return h, w
 
     def _get_initial_image(self, init_mode):
