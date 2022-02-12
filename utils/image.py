@@ -21,12 +21,12 @@ def cv2pt(img):
     return img
 
 
-def aspect_ratio_resize(img, max_dim):
+def aspect_ratio_resize(img, max_dim=256):
     y, x, c = img.shape
     if x > y:
-        return cv2.resize(img, max_dim)
+        return cv2.resize(img, (max_dim, int(y/x*max_dim)))
     else:
-        return cv2.resize(img, max_dim)
+        return cv2.resize(img, (int(x/y*max_dim), max_dim))
 
 
 def downscale(img, pyr_factor):

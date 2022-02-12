@@ -36,6 +36,7 @@ if __name__ == '__main__':
     images = [Image.open(open(p, "rb")) for p in image_paths]
     img_size = images[0].size
     new_image = concat_images(images)
+    new_image = new_image.resize(img_size)
     td = tempfile.TemporaryDirectory()
     new_image_path = os.path.join(td.name, "new_image.png")
     new_image.save(new_image_path)
@@ -46,7 +47,7 @@ if __name__ == '__main__':
                      reduce_memory_footprint=True)
     GPNN_module = GPNN(PNN_moduel,
                        scale_factor=(1, 1),
-                       resize=img_size,
+                       resize=0,
                        num_steps=10,
                        pyr_factor=0.75,
                        coarse_dim=14,
